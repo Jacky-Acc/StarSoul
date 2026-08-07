@@ -5,34 +5,26 @@ import * as THREE from
 import PlayerController from
 "./PlayerController.js";
 
-
 import Terrain from
 "./Terrain.js";
-
 
 import Plant from
 "./Plant.js";
 
-
 import Crystal from
 "./Crystal.js";
-
 
 import Creature from
 "./Creature.js";
 
-
 import Environment from
 "./Environment.js";
-
 
 import Base from
 "./Base.js";
 
-
 import Spaceship from
 "./Spaceship.js";
-
 
 import Tower from
 "./Tower.js";
@@ -41,20 +33,26 @@ import Tower from
 import PlayerData from
 "./PlayerData.js";
 
-
-import Interaction from
-"./Interaction.js";
-
-
 import UI from
 "./UI.js";
 
 
+import Resource from
+"./Resource.js";
+
+import Quest from
+"./Quest.js";
+
+import Scanner from
+"./Scanner.js";
 
 
-// =====================
+
+
+
+// =======================
 // 世界
-// =====================
+// =======================
 
 const scene =
 new THREE.Scene();
@@ -62,148 +60,136 @@ new THREE.Scene();
 
 
 
-// =====================
+
+// =======================
 // 摄像机
-// =====================
+// =======================
 
 const camera =
 new THREE.PerspectiveCamera(
 
-    75,
+75,
 
-    window.innerWidth /
-    window.innerHeight,
+window.innerWidth /
+window.innerHeight,
 
-    0.1,
+0.1,
 
-    1500
+1500
 
 );
 
 
 camera.position.set(
 
-    0,
+0,
 
-    5,
+5,
 
-    20
+20
 
 );
 
 
 
 
-// =====================
+
+// =======================
 // 渲染器
-// =====================
+// =======================
 
 const renderer =
 new THREE.WebGLRenderer({
 
-    canvas:
-    document.getElementById(
-        "gameCanvas"
-    ),
+canvas:
+document.getElementById(
+"gameCanvas"
+),
 
-    antialias:true
+antialias:true
 
 });
 
 
 
 renderer.setPixelRatio(
+
 window.devicePixelRatio
+
 );
 
 
 
 renderer.setSize(
 
-    window.innerWidth,
+window.innerWidth,
 
-    window.innerHeight
+window.innerHeight
 
 );
 
 
 
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled=true;
 
 
 
 
 
-// =====================
+// =======================
 // 环境
-// =====================
+// =======================
 
-new Environment(
-scene
-);
+new Environment(scene);
 
 
 
 
-// =====================
-// 自然世界
-// =====================
+// =======================
+// 星球生态
+// =======================
 
-new Terrain(
-scene
-);
+new Terrain(scene);
 
 
-new Plant(
-scene
-);
+new Plant(scene);
 
 
-new Crystal(
-scene
-);
+new Crystal(scene);
 
 
 
 
-// =====================
-// 文明遗迹
-// =====================
+// =======================
+// 文明设施
+// =======================
 
-new Base(
-scene
-);
+new Base(scene);
 
 
-new Spaceship(
-scene
-);
+new Spaceship(scene);
 
 
-new Tower(
-scene
-);
+new Tower(scene);
 
 
 
 
 
-// =====================
+// =======================
 // 生物
-// =====================
+// =======================
 
 const creatures =
-new Creature(
-scene
-);
+new Creature(scene);
 
 
 
 
 
-// =====================
+// =======================
 // 玩家数据
-// =====================
+// =======================
 
 const playerData =
 new PlayerData();
@@ -212,7 +198,9 @@ new PlayerData();
 
 
 
+// =======================
 // UI
+// =======================
 
 const ui =
 new UI(
@@ -223,14 +211,44 @@ playerData
 
 
 
-// 互动系统
+// =======================
+// 资源系统
+// =======================
 
-const interaction =
-new Interaction(
+const resource =
+new Resource(
+scene
+);
 
-    camera,
 
-    playerData
+
+
+
+// =======================
+// 任务系统
+// =======================
+
+const quest =
+new Quest();
+
+
+
+
+
+// =======================
+// 扫描采集
+// =======================
+
+const scanner =
+new Scanner(
+
+camera,
+
+resource,
+
+playerData,
+
+quest
 
 );
 
@@ -238,7 +256,9 @@ new Interaction(
 
 
 
-// 玩家控制
+// =======================
+// 玩家
+// =======================
 
 const player =
 new PlayerController(
@@ -250,38 +270,39 @@ camera
 
 
 
-// =====================
+// =======================
 // 游戏循环
-// =====================
+// =======================
 
 function animate(){
 
 
-    requestAnimationFrame(
-        animate
-    );
+requestAnimationFrame(
+animate
+);
 
 
 
-    player.update();
+player.update();
 
 
 
-    creatures.update();
+creatures.update();
 
 
 
-    ui.update();
+ui.update();
 
 
 
-    renderer.render(
+renderer.render(
 
-        scene,
+scene,
 
-        camera
+camera
 
-    );
+);
+
 
 
 }
@@ -294,10 +315,9 @@ animate();
 
 
 
-
-// =====================
-// 自适应
-// =====================
+// =======================
+// 屏幕适配
+// =======================
 
 window.addEventListener(
 
