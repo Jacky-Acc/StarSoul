@@ -1,30 +1,34 @@
-import * as THREE from 
+import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
-// ====================
-// 基础场景
-// ====================
+import PlayerController from
+"./PlayerController.js";
 
-const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(
+// 场景
+
+const scene =
+new THREE.Scene();
+
+
+scene.background =
+new THREE.Color(
     0x87ceeb
 );
 
 
-// ====================
+
 // 摄像机
-// ====================
 
 const camera =
-    new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth /
-        window.innerHeight,
-        0.1,
-        1000
-    );
+new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth /
+    window.innerHeight,
+    0.1,
+    1000
+);
 
 
 camera.position.set(
@@ -34,21 +38,20 @@ camera.position.set(
 );
 
 
-// ====================
+
 // 渲染器
-// ====================
 
 const renderer =
-    new THREE.WebGLRenderer({
+new THREE.WebGLRenderer({
 
-        canvas:
-        document.getElementById(
-            "gameCanvas"
-        ),
+    canvas:
+    document.getElementById(
+        "gameCanvas"
+    ),
 
-        antialias:true
+    antialias:true
 
-    });
+});
 
 
 renderer.setSize(
@@ -57,48 +60,44 @@ renderer.setSize(
 );
 
 
-// ====================
-// 地面
-// ====================
 
-const groundGeometry =
+// 地面
+
+const ground =
+new THREE.Mesh(
+
     new THREE.PlaneGeometry(
         200,
         200
-    );
+    ),
 
 
-const groundMaterial =
     new THREE.MeshStandardMaterial({
 
         color:0x3f9142
 
-    });
+    })
 
-
-const ground =
-    new THREE.Mesh(
-        groundGeometry,
-        groundMaterial
-    );
+);
 
 
 ground.rotation.x =
-    -Math.PI / 2;
+-Math.PI/2;
 
 
-scene.add(ground);
+scene.add(
+    ground
+);
 
 
-// ====================
+
 // 光照
-// ====================
 
 const sun =
-    new THREE.DirectionalLight(
-        0xffffff,
-        2
-    );
+new THREE.DirectionalLight(
+    0xffffff,
+    2
+);
 
 
 sun.position.set(
@@ -108,168 +107,35 @@ sun.position.set(
 );
 
 
-scene.add(sun);
+scene.add(
+    sun
+);
 
 
 
 const ambient =
-    new THREE.AmbientLight(
-        0xffffff,
-        0.6
-    );
-
-
-scene.add(ambient);
-
-
-// ====================
-// 玩家控制
-// ====================
-
-const keys = {};
-
-window.addEventListener(
-    "keydown",
-    (event)=>{
-
-        keys[event.code]=true;
-
-    }
+new THREE.AmbientLight(
+    0xffffff,
+    0.5
 );
 
 
-window.addEventListener(
-    "keyup",
-    (event)=>{
-
-        keys[event.code]=false;
-
-    }
+scene.add(
+    ambient
 );
 
 
-// 移动速度
 
-const speed = 1;
+// 玩家控制器
 
-
-
-function playerMove(){
-
-    if(keys["KeyW"]){
-
-        camera.position.z -= speed;
-
-        console.log("W 前进", camera.position.z);
-
-    }
-
-
-    if(keys["KeyS"]){
-
-        camera.position.z += speed;
-
-        console.log("S 后退", camera.position.z);
-
-    }
-
-
-    if(keys["KeyA"]){
-
-        camera.position.x -= speed;
-
-        console.log("A 左移", camera.position.x);
-
-    }
-
-
-    if(keys["KeyD"]){
-
-        camera.position.x += speed;
-
-        console.log("D 右移", camera.position.x);
-
-    }
-
-}
+const player =
+new PlayerController(
+    camera
+);
 
 
 
-// ====================
-// 鼠标视角
-// ====================
-
-
-let mouseDown=false;
-
-
-let rotationX=0;
-let rotationY=0;
-
-
-document.addEventListener(
-"click",
-()=>{
-
-    document.body.requestPointerLock();
-
-});
-
-
-
-document.addEventListener(
-"mousemove",
-(event)=>{
-
-
-    if(
-    document.pointerLockElement
-    ){
-
-        rotationY -=
-        event.movementX *
-        0.002;
-
-
-        rotationX -=
-        event.movementY *
-        0.002;
-
-
-        rotationX =
-        Math.max(
-            -1.5,
-            Math.min(
-                1.5,
-                rotationX
-            )
-        );
-
-    }
-
-});
-
-
-
-function cameraLook(){
-
-    camera.rotation.order="YXZ";
-
-
-    camera.rotation.y =
-    rotationY;
-
-
-    camera.rotation.x =
-    rotationX;
-
-}
-
-
-
-// ====================
 // 游戏循环
-// ====================
 
 function animate(){
 
@@ -279,10 +145,7 @@ function animate(){
     );
 
 
-    playerMove();
-
-
-    cameraLook();
+    player.update();
 
 
     renderer.render(
@@ -298,10 +161,7 @@ animate();
 
 
 
-// ====================
-// 屏幕适配
-// ====================
-
+// 自适应
 
 window.addEventListener(
 "resize",
@@ -314,7 +174,6 @@ window.innerHeight;
 
 
 camera.updateProjectionMatrix();
-
 
 
 renderer.setSize(
