@@ -2,33 +2,53 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
-// 创建场景
+// ====================
+// 基础场景
+// ====================
+
 const scene = new THREE.Scene();
 
-
-// 异星白天天空颜色
 scene.background = new THREE.Color(
     0x87ceeb
 );
 
 
-// 创建摄像机
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+// ====================
+// 摄像机
+// ====================
+
+const camera =
+    new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        1000
+    );
+
+
+camera.position.set(
+    0,
+    3,
+    10
 );
 
 
-// 创建渲染器
-const renderer = new THREE.WebGLRenderer({
+// ====================
+// 渲染器
+// ====================
 
-    canvas: document.getElementById("gameCanvas"),
+const renderer =
+    new THREE.WebGLRenderer({
 
-    antialias: true
+        canvas:
+        document.getElementById(
+            "gameCanvas"
+        ),
 
-});
+        antialias:true
+
+    });
 
 
 renderer.setSize(
@@ -37,7 +57,10 @@ renderer.setSize(
 );
 
 
+// ====================
 // 地面
+// ====================
+
 const groundGeometry =
     new THREE.PlaneGeometry(
         200,
@@ -48,7 +71,7 @@ const groundGeometry =
 const groundMaterial =
     new THREE.MeshStandardMaterial({
 
-        color: 0x3f9142
+        color:0x3f9142
 
     });
 
@@ -67,67 +90,200 @@ ground.rotation.x =
 scene.add(ground);
 
 
+// ====================
+// 光照
+// ====================
 
-// 太阳光
-const sunlight =
+const sun =
     new THREE.DirectionalLight(
         0xffffff,
         2
     );
 
 
-sunlight.position.set(
+sun.position.set(
     50,
     100,
     50
 );
 
 
-scene.add(sunlight);
+scene.add(sun);
 
 
 
-// 环境光
 const ambient =
     new THREE.AmbientLight(
         0xffffff,
-        0.5
+        0.6
     );
 
 
 scene.add(ambient);
 
 
+// ====================
+// 玩家控制
+// ====================
 
-// 摄像机位置
-camera.position.set(
-    0,
-    5,
-    10
+const keys = {};
+
+window.addEventListener(
+    "keydown",
+    (event)=>{
+
+        keys[event.code]=true;
+
+    }
 );
 
 
-// 看向地面
-camera.lookAt(
-    0,
-    0,
-    0
+window.addEventListener(
+    "keyup",
+    (event)=>{
+
+        keys[event.code]=false;
+
+    }
 );
 
 
+// 移动速度
 
-// 动画循环
+const speed = 0.15;
+
+
+
+function playerMove(){
+
+
+    if(keys["KeyW"]){
+
+        camera.position.z -= speed;
+
+    }
+
+
+    if(keys["KeyS"]){
+
+        camera.position.z += speed;
+
+    }
+
+
+    if(keys["KeyA"]){
+
+        camera.position.x -= speed;
+
+    }
+
+
+    if(keys["KeyD"]){
+
+        camera.position.x += speed;
+
+    }
+
+
+}
+
+
+
+// ====================
+// 鼠标视角
+// ====================
+
+
+let mouseDown=false;
+
+
+let rotationX=0;
+let rotationY=0;
+
+
+document.addEventListener(
+"click",
+()=>{
+
+    document.body.requestPointerLock();
+
+});
+
+
+
+document.addEventListener(
+"mousemove",
+(event)=>{
+
+
+    if(
+    document.pointerLockElement
+    ){
+
+        rotationY -=
+        event.movementX *
+        0.002;
+
+
+        rotationX -=
+        event.movementY *
+        0.002;
+
+
+        rotationX =
+        Math.max(
+            -1.5,
+            Math.min(
+                1.5,
+                rotationX
+            )
+        );
+
+    }
+
+});
+
+
+
+function cameraLook(){
+
+    camera.rotation.order="YXZ";
+
+
+    camera.rotation.y =
+    rotationY;
+
+
+    camera.rotation.x =
+    rotationX;
+
+}
+
+
+
+// ====================
+// 游戏循环
+// ====================
+
 function animate(){
+
 
     requestAnimationFrame(
         animate
     );
 
 
+    playerMove();
+
+
+    cameraLook();
+
+
     renderer.render(
         scene,
         camera
     );
+
 
 }
 
@@ -136,25 +292,29 @@ animate();
 
 
 
-// 窗口适配
+// ====================
+// 屏幕适配
+// ====================
+
+
 window.addEventListener(
-    "resize",
-    ()=>{
+"resize",
+()=>{
 
 
-        camera.aspect =
-            window.innerWidth /
-            window.innerHeight;
+camera.aspect =
+window.innerWidth /
+window.innerHeight;
 
 
-        camera.updateProjectionMatrix();
+camera.updateProjectionMatrix();
 
 
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
 
-
-    }
+renderer.setSize(
+window.innerWidth,
+window.innerHeight
 );
+
+
+});
