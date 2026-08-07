@@ -2,18 +2,14 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
+// =====================
+// 创建场景
+// =====================
 
-const canvas =
-document.getElementById(
-"gameCanvas"
-);
-
-
-
-const scene =
-new THREE.Scene();
+const scene = new THREE.Scene();
 
 
+// 白天异星天空
 
 scene.background =
 new THREE.Color(
@@ -21,44 +17,70 @@ new THREE.Color(
 );
 
 
+// 大气雾
+
+scene.fog =
+new THREE.FogExp2(
+
+0x9bdcff,
+
+0.002
+
+);
+
+
+
+// =====================
+// 摄像机
+// =====================
 
 const camera =
 new THREE.PerspectiveCamera(
 
-75,
+70,
 
 window.innerWidth /
 window.innerHeight,
 
 0.1,
 
-1000
+2000
 
 );
-
 
 
 camera.position.set(
 
 0,
 
-5,
+6,
 
-10
+12
 
 );
 
 
 
+// =====================
+// Renderer
+// =====================
+
 const renderer =
 new THREE.WebGLRenderer({
 
-canvas:canvas,
+canvas:
+document.getElementById(
+"gameCanvas"
+),
 
 antialias:true
 
 });
 
+
+renderer.setPixelRatio(
+window.devicePixelRatio
+);
 
 
 renderer.setSize(
@@ -70,36 +92,128 @@ window.innerHeight
 );
 
 
+// 高质量渲染
+
+renderer.shadowMap.enabled=true;
+
+
+renderer.shadowMap.type =
+THREE.PCFSoftShadowMap;
+
+
+renderer.outputColorSpace =
+THREE.SRGBColorSpace;
+
+
+renderer.toneMapping =
+THREE.ACESFilmicToneMapping;
+
+
+renderer.toneMappingExposure =
+1.2;
 
 
 
-// 地面
+
+
+// =====================
+// 太阳
+// =====================
+
+const sun =
+new THREE.DirectionalLight(
+
+0xffffff,
+
+3
+
+);
+
+
+sun.position.set(
+
+100,
+
+150,
+
+50
+
+);
+
+
+sun.castShadow=true;
+
+
+sun.shadow.mapSize.width=2048;
+
+sun.shadow.mapSize.height=2048;
+
+
+scene.add(
+sun
+);
+
+
+
+
+// 环境光
+
+const ambient =
+new THREE.HemisphereLight(
+
+0xbfe8ff,
+
+0x557744,
+
+1.5
+
+);
+
+
+scene.add(
+ambient
+);
+
+
+
+
+
+// =====================
+// 异星地面
+// =====================
 
 const ground =
 new THREE.Mesh(
 
 new THREE.PlaneGeometry(
 
-200,
+500,
 
-200
+500,
+
+100,
+
+100
 
 ),
 
 
 new THREE.MeshStandardMaterial({
 
-color:0x55aa55
+color:0x4f9b52,
+
+roughness:1
 
 })
 
 );
 
 
-
 ground.rotation.x =
 -Math.PI/2;
 
+
+ground.receiveShadow=true;
 
 
 scene.add(
@@ -110,37 +224,81 @@ ground
 
 
 
-// 光照
 
-const light =
-new THREE.DirectionalLight(
+// =====================
+// 异星山体
+// =====================
 
-0xffffff,
 
-2
+for(
+let i=0;
+
+i<15;
+
+i++
+){
+
+
+const mountain =
+new THREE.Mesh(
+
+new THREE.ConeGeometry(
+
+10+
+
+Math.random()*15,
+
+30+
+
+Math.random()*30,
+
+8
+
+),
+
+
+new THREE.MeshStandardMaterial({
+
+color:0x557755,
+
+roughness:1
+
+})
 
 );
 
 
 
-light.position.set(
+mountain.position.set(
 
-10,
+(Math.random()-0.5)*300,
 
-20,
+15,
 
-10
+(Math.random()-0.5)*300
 
 );
 
+
+mountain.castShadow=true;
 
 
 scene.add(
-light
+mountain
 );
 
 
+}
 
+
+
+
+
+
+
+// =====================
+// 玩家探索者
+// =====================
 
 
 const player =
@@ -150,7 +308,7 @@ new THREE.CapsuleGeometry(
 
 0.5,
 
-1,
+1.5,
 
 8,
 
@@ -161,7 +319,11 @@ new THREE.CapsuleGeometry(
 
 new THREE.MeshStandardMaterial({
 
-color:0xffffff
+color:0xffffff,
+
+metalness:0.5,
+
+roughness:0.5
 
 })
 
@@ -171,6 +333,8 @@ color:0xffffff
 
 player.position.y=1;
 
+
+player.castShadow=true;
 
 
 scene.add(
@@ -182,13 +346,98 @@ player
 
 
 
-function animate(){
+// =====================
+// 简单移动
+// =====================
 
+const keys={};
+
+
+window.addEventListener(
+
+"keydown",
+
+e=>{
+
+keys[e.code]=true;
+
+}
+
+);
+
+
+window.addEventListener(
+
+"keyup",
+
+e=>{
+
+keys[e.code]=false;
+
+}
+
+);
+
+
+
+
+
+function update(){
+
+const speed=0.15;
+
+
+if(keys.KeyW)
+
+player.position.z-=speed;
+
+
+if(keys.KeyS)
+
+player.position.z+=speed;
+
+
+if(keys.KeyA)
+
+player.position.x-=speed;
+
+
+if(keys.KeyD)
+
+player.position.x+=speed;
+
+
+camera.position.x =
+player.position.x;
+
+
+camera.position.z =
+player.position.z+10;
+
+
+camera.lookAt(player.position);
+
+
+
+}
+
+
+
+
+
+
+// =====================
+// 循环
+// =====================
+
+function animate(){
 
 requestAnimationFrame(
 animate
 );
 
+
+update();
 
 
 renderer.render(
@@ -203,9 +452,7 @@ camera
 }
 
 
-
 animate();
-
 
 
 
@@ -219,15 +466,11 @@ window.addEventListener(
 
 
 camera.aspect =
-
 window.innerWidth /
-
 window.innerHeight;
 
 
-
 camera.updateProjectionMatrix();
-
 
 
 renderer.setSize(
