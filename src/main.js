@@ -22,19 +22,33 @@ import Environment from
 "./Environment.js";
 
 
+import Base from
+"./Base.js";
 
-// =======================
-// 世界创建
-// =======================
+
+import Spaceship from
+"./Spaceship.js";
+
+
+import Tower from
+"./Tower.js";
+
+
+
+
+// =====================
+// 世界
+// =====================
 
 const scene =
 new THREE.Scene();
 
 
 
-// =======================
+
+// =====================
 // 摄像机
-// =======================
+// =====================
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -46,10 +60,9 @@ new THREE.PerspectiveCamera(
 
     0.1,
 
-    1000
+    1500
 
 );
-
 
 
 camera.position.set(
@@ -64,9 +77,10 @@ camera.position.set(
 
 
 
-// =======================
+
+// =====================
 // 渲染器
-// =======================
+// =====================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -83,22 +97,20 @@ new THREE.WebGLRenderer({
 
 
 renderer.setPixelRatio(
-    window.devicePixelRatio
+window.devicePixelRatio
 );
 
 
 
 renderer.setSize(
 
-    window.innerWidth,
+window.innerWidth,
 
-    window.innerHeight
+window.innerHeight
 
 );
 
 
-
-// 开启阴影
 
 renderer.shadowMap.enabled = true;
 
@@ -106,90 +118,85 @@ renderer.shadowMap.enabled = true;
 
 
 
-// =======================
+// =====================
 // 环境
-// =======================
+// =====================
 
-new Environment(
-    scene
-);
+new Environment(scene);
 
 
 
 
-// =======================
-// 地形
-// =======================
+// =====================
+// 自然生态
+// =====================
 
-new Terrain(
-    scene
-);
+new Terrain(scene);
 
 
+new Plant(scene);
 
 
-// =======================
-// 植物
-// =======================
-
-new Plant(
-    scene
-);
+new Crystal(scene);
 
 
 
 
-// =======================
-// 能量水晶
-// =======================
+// =====================
+// 人类文明
+// =====================
 
-new Crystal(
-    scene
-);
+new Base(scene);
 
 
+new Spaceship(scene);
 
 
-// =======================
+new Tower(scene);
+
+
+
+
+// =====================
 // 玩家
-// =======================
+// =====================
 
 const player =
 new PlayerController(
-    camera
+camera
 );
 
 
 
 
-// =======================
-// 游戏循环
-// =======================
+// =====================
+// 动画
+// =====================
 
 function animate(){
 
 
-    requestAnimationFrame(
-        animate
-    );
+requestAnimationFrame(
+animate
+);
 
 
 
-    player.update();
+player.update();
 
 
 
-    renderer.render(
+renderer.render(
 
-        scene,
+scene,
 
-        camera
+camera
 
-    );
+);
+
 
 
 }
-
 
 
 animate();
@@ -197,10 +204,9 @@ animate();
 
 
 
-
-// =======================
-// 自适应屏幕
-// =======================
+// =====================
+// 自适应
+// =====================
 
 window.addEventListener(
 
