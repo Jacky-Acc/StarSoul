@@ -2,14 +2,14 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
-// =====================
-// 创建场景
-// =====================
-
-const scene = new THREE.Scene();
+import Player from
+"./src/player/Player.js";
 
 
-// 白天异星天空
+
+const scene =
+new THREE.Scene();
+
 
 scene.background =
 new THREE.Color(
@@ -17,7 +17,6 @@ new THREE.Color(
 );
 
 
-// 大气雾
 
 scene.fog =
 new THREE.FogExp2(
@@ -30,17 +29,13 @@ new THREE.FogExp2(
 
 
 
-// =====================
-// 摄像机
-// =====================
 
 const camera =
 new THREE.PerspectiveCamera(
 
 70,
 
-window.innerWidth /
-window.innerHeight,
+window.innerWidth/window.innerHeight,
 
 0.1,
 
@@ -49,21 +44,6 @@ window.innerHeight,
 );
 
 
-camera.position.set(
-
-0,
-
-6,
-
-12
-
-);
-
-
-
-// =====================
-// Renderer
-// =====================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -78,10 +58,6 @@ antialias:true
 });
 
 
-renderer.setPixelRatio(
-window.devicePixelRatio
-);
-
 
 renderer.setSize(
 
@@ -92,33 +68,18 @@ window.innerHeight
 );
 
 
-// 高质量渲染
 
 renderer.shadowMap.enabled=true;
 
-
-renderer.shadowMap.type =
-THREE.PCFSoftShadowMap;
 
 
 renderer.outputColorSpace =
 THREE.SRGBColorSpace;
 
 
-renderer.toneMapping =
-THREE.ACESFilmicToneMapping;
 
+// 光照
 
-renderer.toneMappingExposure =
-1.2;
-
-
-
-
-
-// =====================
-// 太阳
-// =====================
 
 const sun =
 new THREE.DirectionalLight(
@@ -144,43 +105,31 @@ sun.position.set(
 sun.castShadow=true;
 
 
-sun.shadow.mapSize.width=2048;
-
-sun.shadow.mapSize.height=2048;
-
-
 scene.add(
 sun
 );
 
 
 
+scene.add(
 
-// 环境光
-
-const ambient =
 new THREE.HemisphereLight(
 
 0xbfe8ff,
 
-0x557744,
+0x446633,
 
 1.5
 
+)
+
 );
 
 
-scene.add(
-ambient
-);
 
 
 
-
-
-// =====================
-// 异星地面
-// =====================
+// 地面
 
 const ground =
 new THREE.Mesh(
@@ -189,27 +138,21 @@ new THREE.PlaneGeometry(
 
 500,
 
-500,
-
-100,
-
-100
+500
 
 ),
 
 
 new THREE.MeshStandardMaterial({
 
-color:0x4f9b52,
-
-roughness:1
+color:0x55aa55
 
 })
 
 );
 
 
-ground.rotation.x =
+ground.rotation.x=
 -Math.PI/2;
 
 
@@ -225,32 +168,22 @@ ground
 
 
 
-// =====================
-// 异星山体
-// =====================
+// 山体
 
 
 for(
-let i=0;
-
-i<15;
-
-i++
+let i=0;i<20;i++
 ){
 
 
-const mountain =
+const m =
 new THREE.Mesh(
 
 new THREE.ConeGeometry(
 
-10+
+10,
 
-Math.random()*15,
-
-30+
-
-Math.random()*30,
+30,
 
 8
 
@@ -259,9 +192,7 @@ Math.random()*30,
 
 new THREE.MeshStandardMaterial({
 
-color:0x557755,
-
-roughness:1
+color:0x557755
 
 })
 
@@ -269,7 +200,7 @@ roughness:1
 
 
 
-mountain.position.set(
+m.position.set(
 
 (Math.random()-0.5)*300,
 
@@ -280,12 +211,8 @@ mountain.position.set(
 );
 
 
-mountain.castShadow=true;
 
-
-scene.add(
-mountain
-);
+scene.add(m);
 
 
 }
@@ -294,61 +221,35 @@ mountain
 
 
 
-
-
-// =====================
-// 玩家探索者
-// =====================
-
+// 玩家
 
 const player =
-new THREE.Mesh(
-
-new THREE.CapsuleGeometry(
-
-0.5,
-
-1.5,
-
-8,
-
-16
-
-),
+new Player(scene);
 
 
-new THREE.MeshStandardMaterial({
 
-color:0xffffff,
 
-metalness:0.5,
 
-roughness:0.5
+// 鼠标视角
 
-})
+let angle=0;
+
+
+window.addEventListener(
+
+"mousemove",
+
+e=>{
+
+angle -= e.movementX*0.002;
+
+}
 
 );
 
 
 
-player.position.y=1;
 
-
-player.castShadow=true;
-
-
-scene.add(
-player
-);
-
-
-
-
-
-
-// =====================
-// 简单移动
-// =====================
 
 const keys={};
 
@@ -357,11 +258,7 @@ window.addEventListener(
 
 "keydown",
 
-e=>{
-
-keys[e.code]=true;
-
-}
+e=>keys[e.code]=true
 
 );
 
@@ -370,11 +267,7 @@ window.addEventListener(
 
 "keyup",
 
-e=>{
-
-keys[e.code]=false;
-
-}
+e=>keys[e.code]=false
 
 );
 
@@ -382,62 +275,75 @@ keys[e.code]=false;
 
 
 
-function update(){
-
-const speed=0.15;
-
-
-if(keys.KeyW)
-
-player.position.z-=speed;
-
-
-if(keys.KeyS)
-
-player.position.z+=speed;
-
-
-if(keys.KeyA)
-
-player.position.x-=speed;
-
-
-if(keys.KeyD)
-
-player.position.x+=speed;
-
-
-camera.position.x =
-player.position.x;
-
-
-camera.position.z =
-player.position.z+10;
-
-
-camera.lookAt(player.position);
-
-
-
-}
-
-
-
-
-
-
-// =====================
-// 循环
-// =====================
 
 function animate(){
+
 
 requestAnimationFrame(
 animate
 );
 
 
-update();
+
+// 移动
+
+let dir =
+new THREE.Vector3();
+
+
+
+if(keys.KeyW)
+dir.z-=1;
+
+
+if(keys.KeyS)
+dir.z+=1;
+
+
+if(keys.KeyA)
+dir.x-=1;
+
+
+if(keys.KeyD)
+dir.x+=1;
+
+
+
+dir.normalize();
+
+
+
+player.group.position.addScaledVector(
+
+dir,
+
+0.15
+
+);
+
+
+
+
+// 镜头
+
+camera.position.set(
+
+player.group.position.x,
+
+player.group.position.y+5,
+
+player.group.position.z+10
+
+);
+
+
+
+camera.lookAt(
+
+player.group.position
+
+);
+
 
 
 renderer.render(
@@ -449,37 +355,8 @@ camera
 );
 
 
+
 }
 
 
 animate();
-
-
-
-
-
-window.addEventListener(
-
-"resize",
-
-()=>{
-
-
-camera.aspect =
-window.innerWidth /
-window.innerHeight;
-
-
-camera.updateProjectionMatrix();
-
-
-renderer.setSize(
-
-window.innerWidth,
-
-window.innerHeight
-
-);
-
-
-});
