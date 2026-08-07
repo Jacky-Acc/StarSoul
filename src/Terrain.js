@@ -7,15 +7,11 @@ export default class Terrain {
 
     constructor(scene){
 
-
         this.scene = scene;
-
 
         this.createGround();
 
-
-        this.createHills();
-
+        this.createMountains();
 
     }
 
@@ -26,47 +22,55 @@ export default class Terrain {
 
         const geometry =
         new THREE.PlaneGeometry(
-            200,
-            200,
-            100,
-            100
+            300,
+            300,
+            150,
+            150
         );
 
 
-
-        const position =
+        const vertices =
         geometry.attributes.position;
 
 
 
         for(
-            let i=0;
-            i<position.count;
+            let i = 0;
+            i < vertices.count;
             i++
         ){
 
             const x =
-            position.getX(i);
+            vertices.getX(i);
 
 
             const z =
-            position.getZ(i);
+            vertices.getY(i);
 
 
 
-            const height =
-            Math.sin(x*0.05)
-            *
-            Math.cos(z*0.05)
-            *
+            let height =
+
+            Math.sin(x * 0.05) *
+
+            Math.cos(z * 0.05) *
+
             3;
 
 
-            position.setY(
+
+            height +=
+
+            Math.sin(x * 0.12) *
+
+            Math.cos(z * 0.1);
+
+
+
+            vertices.setZ(
                 i,
                 height
             );
-
 
         }
 
@@ -79,7 +83,9 @@ export default class Terrain {
         const material =
         new THREE.MeshStandardMaterial({
 
-            color:0x4c9b52,
+            color:0x4f9b55,
+
+            roughness:1
 
         });
 
@@ -93,8 +99,7 @@ export default class Terrain {
 
 
         ground.rotation.x =
-        -Math.PI/2;
-
+        -Math.PI / 2;
 
 
         this.scene.add(
@@ -106,36 +111,62 @@ export default class Terrain {
 
 
 
-    createHills(){
+
+    createMountains(){
 
 
-        const material =
+        const mountainMaterial =
         new THREE.MeshStandardMaterial({
 
-            color:0x597d35
+            color:0x596b52,
+
+            roughness:1
 
         });
 
 
 
+        const rockMaterial =
+        new THREE.MeshStandardMaterial({
+
+            color:0x77806d,
+
+            roughness:1
+
+        });
+
+
+
+        // 远处大型山脉
+
         for(
-            let i=0;
-            i<8;
+            let i = 0;
+            i < 15;
             i++
         ){
+
+
+            const height =
+            40 +
+            Math.random()*50;
+
 
 
             const mountain =
             new THREE.Mesh(
 
                 new THREE.ConeGeometry(
-                    15,
-                    30,
+
+                    20 +
+                    Math.random()*20,
+
+                    height,
+
                     32
+
                 ),
 
-
-                material
+                mountainMaterial
 
             );
 
@@ -144,18 +175,21 @@ export default class Terrain {
             mountain.position.set(
 
                 (Math.random()-0.5)
-                *
-                120,
+                *260,
 
 
-                15,
+                height/2,
 
 
-                -80
-                -
-                Math.random()*80
+                -120 -
+                Math.random()*120
 
             );
+
+
+
+            mountain.rotation.y =
+            Math.random()*Math.PI;
 
 
 
@@ -167,7 +201,59 @@ export default class Terrain {
         }
 
 
+
+
+        // 前景岩石
+
+        for(
+            let i = 0;
+            i < 30;
+            i++
+        ){
+
+
+            const rock =
+            new THREE.Mesh(
+
+                new THREE.DodecahedronGeometry(
+
+                    2 +
+                    Math.random()*4
+
+                ),
+
+                rockMaterial
+
+            );
+
+
+
+            rock.position.set(
+
+                (Math.random()-0.5)
+                *120,
+
+
+                2,
+
+
+                (Math.random()-0.5)
+                *120
+
+            );
+
+
+
+            this.scene.add(
+                rock
+            );
+
+
+        }
+
+
     }
+
 
 
 }
