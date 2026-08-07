@@ -6,40 +6,74 @@ import PlayerController from
 "./PlayerController.js";
 
 
-// 场景
+import Terrain from
+"./Terrain.js";
+
+
+
+// =====================
+// 创建世界
+// =====================
 
 const scene =
 new THREE.Scene();
 
 
+// 天空颜色
+
 scene.background =
 new THREE.Color(
-    0x87ceeb
+    0x8fd3ff
+);
+
+
+// 空气雾效果
+
+scene.fog =
+new THREE.Fog(
+    0x8fd3ff,
+    80,
+    300
 );
 
 
 
+
+// =====================
 // 摄像机
+// =====================
 
 const camera =
 new THREE.PerspectiveCamera(
+
     75,
+
     window.innerWidth /
     window.innerHeight,
+
     0.1,
+
     1000
+
 );
 
 
 camera.position.set(
+
     0,
-    3,
-    10
+
+    8,
+
+    20
+
 );
 
 
 
+
+// =====================
 // 渲染器
+// =====================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -54,56 +88,58 @@ new THREE.WebGLRenderer({
 });
 
 
+renderer.setPixelRatio(
+    window.devicePixelRatio
+);
+
+
 renderer.setSize(
+
     window.innerWidth,
+
     window.innerHeight
-);
-
-
-
-// 地面
-
-const ground =
-new THREE.Mesh(
-
-    new THREE.PlaneGeometry(
-        200,
-        200
-    ),
-
-
-    new THREE.MeshStandardMaterial({
-
-        color:0x3f9142
-
-    })
 
 );
 
 
-ground.rotation.x =
--Math.PI/2;
 
+// =====================
+// 异星地形
+// =====================
 
-scene.add(
-    ground
+const terrain =
+new Terrain(
+    scene
 );
 
 
 
-// 光照
+
+// =====================
+// 光照系统
+// =====================
+
+
+// 太阳
 
 const sun =
 new THREE.DirectionalLight(
+
     0xffffff,
-    2
+
+    2.5
+
 );
 
 
 sun.position.set(
+
     50,
+
     100,
-    50
+
+    30
+
 );
 
 
@@ -113,20 +149,31 @@ scene.add(
 
 
 
-const ambient =
-new THREE.AmbientLight(
-    0xffffff,
-    0.5
+// 环境光
+
+const skyLight =
+new THREE.HemisphereLight(
+
+    0x87ceeb,
+
+    0x446644,
+
+    1.2
+
 );
 
 
 scene.add(
-    ambient
+    skyLight
 );
 
 
 
-// 玩家控制器
+
+// =====================
+// 玩家
+// =====================
+
 
 const player =
 new PlayerController(
@@ -135,7 +182,10 @@ new PlayerController(
 
 
 
-// 游戏循环
+
+// =====================
+// 动画循环
+// =====================
 
 function animate(){
 
@@ -148,38 +198,58 @@ function animate(){
     player.update();
 
 
+
     renderer.render(
+
         scene,
+
         camera
+
     );
 
 
 }
 
 
+
 animate();
 
 
 
-// 自适应
+
+// =====================
+// 屏幕适配
+// =====================
+
 
 window.addEventListener(
+
 "resize",
+
 ()=>{
 
 
 camera.aspect =
+
 window.innerWidth /
+
 window.innerHeight;
+
 
 
 camera.updateProjectionMatrix();
 
 
+
 renderer.setSize(
+
 window.innerWidth,
+
 window.innerHeight
+
 );
 
 
-});
+}
+
+);
