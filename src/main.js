@@ -18,6 +18,10 @@ import Crystal from
 "./Crystal.js";
 
 
+import Creature from
+"./Creature.js";
+
+
 import Environment from
 "./Environment.js";
 
@@ -34,15 +38,23 @@ import Tower from
 "./Tower.js";
 
 
-import Creature from
-"./Creature.js";
+import PlayerData from
+"./PlayerData.js";
+
+
+import Interaction from
+"./Interaction.js";
+
+
+import UI from
+"./UI.js";
 
 
 
 
-// =======================
-// 创建世界
-// =======================
+// =====================
+// 世界
+// =====================
 
 const scene =
 new THREE.Scene();
@@ -50,9 +62,9 @@ new THREE.Scene();
 
 
 
-// =======================
+// =====================
 // 摄像机
-// =======================
+// =====================
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -69,7 +81,6 @@ new THREE.PerspectiveCamera(
 );
 
 
-
 camera.position.set(
 
     0,
@@ -83,10 +94,9 @@ camera.position.set(
 
 
 
-
-// =======================
+// =====================
 // 渲染器
-// =======================
+// =====================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -110,9 +120,9 @@ window.devicePixelRatio
 
 renderer.setSize(
 
-window.innerWidth,
+    window.innerWidth,
 
-window.innerHeight
+    window.innerHeight
 
 );
 
@@ -124,86 +134,115 @@ renderer.shadowMap.enabled = true;
 
 
 
-// =======================
-// 世界环境
-// =======================
+// =====================
+// 环境
+// =====================
 
 new Environment(
-    scene
+scene
 );
 
 
 
 
-
-// =======================
-// 自然生态
-// =======================
+// =====================
+// 自然世界
+// =====================
 
 new Terrain(
-    scene
+scene
 );
-
 
 
 new Plant(
-    scene
+scene
 );
-
 
 
 new Crystal(
-    scene
+scene
 );
 
 
 
 
-
-// =======================
-// 科技文明
-// =======================
+// =====================
+// 文明遗迹
+// =====================
 
 new Base(
-    scene
+scene
 );
-
 
 
 new Spaceship(
-    scene
+scene
 );
-
 
 
 new Tower(
-    scene
+scene
 );
 
 
 
 
 
-// =======================
-// 异星生命
-// =======================
+// =====================
+// 生物
+// =====================
 
 const creatures =
 new Creature(
-    scene
+scene
 );
 
 
 
 
 
-// =======================
-// 玩家
-// =======================
+// =====================
+// 玩家数据
+// =====================
+
+const playerData =
+new PlayerData();
+
+
+
+
+
+// UI
+
+const ui =
+new UI(
+playerData
+);
+
+
+
+
+
+// 互动系统
+
+const interaction =
+new Interaction(
+
+    camera,
+
+    playerData
+
+);
+
+
+
+
+
+// 玩家控制
 
 const player =
 new PlayerController(
-    camera
+camera
 );
 
 
@@ -211,9 +250,9 @@ new PlayerController(
 
 
 
-// =======================
+// =====================
 // 游戏循环
-// =======================
+// =====================
 
 function animate(){
 
@@ -232,6 +271,10 @@ function animate(){
 
 
 
+    ui.update();
+
+
+
     renderer.render(
 
         scene,
@@ -239,7 +282,6 @@ function animate(){
         camera
 
     );
-
 
 
 }
@@ -253,10 +295,9 @@ animate();
 
 
 
-
-// =======================
+// =====================
 // 自适应
-// =======================
+// =====================
 
 window.addEventListener(
 
