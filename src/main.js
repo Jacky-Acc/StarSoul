@@ -2,13 +2,15 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
-import Player from
-"./src/player/Player.js";
+import PlayerController from
+"./src/PlayerController.js";
 
 
+// ======================
+// 场景
+// ======================
 
-const scene =
-new THREE.Scene();
+const scene = new THREE.Scene();
 
 
 scene.background =
@@ -17,25 +19,25 @@ new THREE.Color(
 );
 
 
-
 scene.fog =
 new THREE.FogExp2(
-
 0x9bdcff,
-
 0.002
-
 );
 
 
 
+// ======================
+// 摄像机
+// ======================
 
 const camera =
 new THREE.PerspectiveCamera(
 
 70,
 
-window.innerWidth/window.innerHeight,
+window.innerWidth /
+window.innerHeight,
 
 0.1,
 
@@ -44,6 +46,17 @@ window.innerWidth/window.innerHeight,
 );
 
 
+camera.position.set(
+0,
+5,
+10
+);
+
+
+
+// ======================
+// 渲染器
+// ======================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -58,7 +71,6 @@ antialias:true
 });
 
 
-
 renderer.setSize(
 
 window.innerWidth,
@@ -68,9 +80,7 @@ window.innerHeight
 );
 
 
-
 renderer.shadowMap.enabled=true;
-
 
 
 renderer.outputColorSpace =
@@ -78,7 +88,11 @@ THREE.SRGBColorSpace;
 
 
 
+
+
+// ======================
 // 光照
+// ======================
 
 
 const sun =
@@ -129,7 +143,9 @@ new THREE.HemisphereLight(
 
 
 
+// ======================
 // 地面
+// ======================
 
 const ground =
 new THREE.Mesh(
@@ -145,14 +161,16 @@ new THREE.PlaneGeometry(
 
 new THREE.MeshStandardMaterial({
 
-color:0x55aa55
+color:0x55aa55,
+
+roughness:1
 
 })
 
 );
 
 
-ground.rotation.x=
+ground.rotation.x =
 -Math.PI/2;
 
 
@@ -167,16 +185,21 @@ ground
 
 
 
-
+// ======================
 // 山体
-
+// ======================
 
 for(
-let i=0;i<20;i++
+let i=0;
+
+i<20;
+
+i++
+
 ){
 
 
-const m =
+const mountain =
 new THREE.Mesh(
 
 new THREE.ConeGeometry(
@@ -200,7 +223,7 @@ color:0x557755
 
 
 
-m.position.set(
+mountain.position.set(
 
 (Math.random()-0.5)*300,
 
@@ -211,8 +234,12 @@ m.position.set(
 );
 
 
+mountain.castShadow=true;
 
-scene.add(m);
+
+scene.add(
+mountain
+);
 
 
 }
@@ -221,29 +248,17 @@ scene.add(m);
 
 
 
+// ======================
 // 玩家
+// ======================
+
 
 const player =
-new Player(scene);
+new PlayerController(
 
+scene,
 
-
-
-
-// 鼠标视角
-
-let angle=0;
-
-
-window.addEventListener(
-
-"mousemove",
-
-e=>{
-
-angle -= e.movementX*0.002;
-
-}
+camera
 
 );
 
@@ -251,23 +266,37 @@ angle -= e.movementX*0.002;
 
 
 
+// ======================
+// 键盘移动
+// ======================
+
 const keys={};
+
 
 
 window.addEventListener(
 
 "keydown",
 
-e=>keys[e.code]=true
+e=>{
+
+keys[e.code]=true;
+
+}
 
 );
+
 
 
 window.addEventListener(
 
 "keyup",
 
-e=>keys[e.code]=false
+e=>{
+
+keys[e.code]=false;
+
+}
 
 );
 
@@ -275,6 +304,9 @@ e=>keys[e.code]=false
 
 
 
+// ======================
+// 游戏循环
+// ======================
 
 function animate(){
 
@@ -285,64 +317,11 @@ animate
 
 
 
-// 移动
+if(player.update){
 
-let dir =
-new THREE.Vector3();
+player.update(keys);
 
-
-
-if(keys.KeyW)
-dir.z-=1;
-
-
-if(keys.KeyS)
-dir.z+=1;
-
-
-if(keys.KeyA)
-dir.x-=1;
-
-
-if(keys.KeyD)
-dir.x+=1;
-
-
-
-dir.normalize();
-
-
-
-player.group.position.addScaledVector(
-
-dir,
-
-0.15
-
-);
-
-
-
-
-// 镜头
-
-camera.position.set(
-
-player.group.position.x,
-
-player.group.position.y+5,
-
-player.group.position.z+10
-
-);
-
-
-
-camera.lookAt(
-
-player.group.position
-
-);
+}
 
 
 
@@ -359,4 +338,40 @@ camera
 }
 
 
+
 animate();
+
+
+
+
+
+// ======================
+// 窗口适配
+// ======================
+
+window.addEventListener(
+
+"resize",
+
+()=>{
+
+
+camera.aspect =
+
+window.innerWidth /
+window.innerHeight;
+
+
+camera.updateProjectionMatrix();
+
+
+renderer.setSize(
+
+window.innerWidth,
+
+window.innerHeight
+
+);
+
+
+});
