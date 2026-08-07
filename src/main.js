@@ -10,38 +10,31 @@ import Terrain from
 "./Terrain.js";
 
 
+import Plant from
+"./Plant.js";
 
-// =====================
-// 创建世界
-// =====================
+
+import Crystal from
+"./Crystal.js";
+
+
+import Environment from
+"./Environment.js";
+
+
+
+// =======================
+// 世界创建
+// =======================
 
 const scene =
 new THREE.Scene();
 
 
-// 天空颜色
 
-scene.background =
-new THREE.Color(
-    0x8fd3ff
-);
-
-
-// 空气雾效果
-
-scene.fog =
-new THREE.Fog(
-    0x8fd3ff,
-    80,
-    300
-);
-
-
-
-
-// =====================
+// =======================
 // 摄像机
-// =====================
+// =======================
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -58,11 +51,12 @@ new THREE.PerspectiveCamera(
 );
 
 
+
 camera.position.set(
 
     0,
 
-    8,
+    5,
 
     20
 
@@ -70,10 +64,9 @@ camera.position.set(
 
 
 
-
-// =====================
+// =======================
 // 渲染器
-// =====================
+// =======================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -88,9 +81,11 @@ new THREE.WebGLRenderer({
 });
 
 
+
 renderer.setPixelRatio(
     window.devicePixelRatio
 );
+
 
 
 renderer.setSize(
@@ -103,11 +98,29 @@ renderer.setSize(
 
 
 
-// =====================
-// 异星地形
-// =====================
+// 开启阴影
 
-const terrain =
+renderer.shadowMap.enabled = true;
+
+
+
+
+
+// =======================
+// 环境
+// =======================
+
+new Environment(
+    scene
+);
+
+
+
+
+// =======================
+// 地形
+// =======================
+
 new Terrain(
     scene
 );
@@ -115,65 +128,31 @@ new Terrain(
 
 
 
-// =====================
-// 光照系统
-// =====================
+// =======================
+// 植物
+// =======================
 
-
-// 太阳
-
-const sun =
-new THREE.DirectionalLight(
-
-    0xffffff,
-
-    2.5
-
-);
-
-
-sun.position.set(
-
-    50,
-
-    100,
-
-    30
-
-);
-
-
-scene.add(
-    sun
-);
-
-
-
-// 环境光
-
-const skyLight =
-new THREE.HemisphereLight(
-
-    0x87ceeb,
-
-    0x446644,
-
-    1.2
-
-);
-
-
-scene.add(
-    skyLight
+new Plant(
+    scene
 );
 
 
 
 
-// =====================
+// =======================
+// 能量水晶
+// =======================
+
+new Crystal(
+    scene
+);
+
+
+
+
+// =======================
 // 玩家
-// =====================
-
+// =======================
 
 const player =
 new PlayerController(
@@ -183,9 +162,9 @@ new PlayerController(
 
 
 
-// =====================
-// 动画循环
-// =====================
+// =======================
+// 游戏循环
+// =======================
 
 function animate(){
 
@@ -193,6 +172,7 @@ function animate(){
     requestAnimationFrame(
         animate
     );
+
 
 
     player.update();
@@ -217,10 +197,10 @@ animate();
 
 
 
-// =====================
-// 屏幕适配
-// =====================
 
+// =======================
+// 自适应屏幕
+// =======================
 
 window.addEventListener(
 
@@ -250,6 +230,5 @@ window.innerHeight
 );
 
 
-}
 
-);
+});
