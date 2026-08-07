@@ -1,483 +1,331 @@
 import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
+
+import Character from
+"./Character.js";
+
+
+import CameraFollow from
+"./CameraFollow.js";
+
+
+
 export default class PlayerController {
 
 
-    constructor(camera){
+constructor(
+scene,
+camera
+){
 
 
-        this.camera = camera;
+this.scene = scene;
 
+this.camera = camera;
 
 
-        // 键盘状态
 
-        this.keys = {};
+// 玩家模型
 
+this.character =
+new Character(
+scene
+);
 
 
-        // 移动速度
 
-        this.speed = 0.18;
+this.position =
+new THREE.Vector3(
 
+0,
 
+0,
 
-        // 鼠标旋转
+20
 
-        this.rotation = {
+);
 
-            x:0,
 
-            y:0
 
-        };
+this.velocity =
+new THREE.Vector3();
 
 
 
-        // 重力
 
-        this.velocityY = 0;
 
+// 移动状态
 
-        this.gravity = -0.02;
+this.keys={};
 
 
 
-        // 地面高度
+this.speed=0.15;
 
-        this.groundHeight = 3;
 
+this.runSpeed=0.3;
 
 
-        // 是否在地面
+this.jumpPower=0.35;
 
-        this.onGround = false;
 
+this.gravity=-0.02;
 
 
-        // 跳跃力量
 
-        this.jumpPower = 0.45;
+this.ground=true;
 
 
 
-        this.setupKeyboard();
 
+// 摄像机
 
-        this.setupMouse();
+this.cameraFollow =
+new CameraFollow(
 
+camera,
 
-    }
+this.position
 
+);
 
 
 
 
-    setupKeyboard(){
+this.setup();
 
 
 
-        window.addEventListener(
+}
 
-            "keydown",
 
-            (event)=>{
 
 
-                this.keys[event.code]=true;
 
+setup(){
 
 
-            }
 
-        );
+window.addEventListener(
 
+"keydown",
 
+(e)=>{
 
 
-        window.addEventListener(
+this.keys[e.code]=true;
 
-            "keyup",
 
-            (event)=>{
+}
+);
 
 
-                this.keys[event.code]=false;
 
+window.addEventListener(
 
+"keyup",
 
-            }
+(e)=>{
 
-        );
 
+this.keys[e.code]=false;
 
 
-    }
+}
+);
 
 
 
+}
 
 
 
-    setupMouse(){
 
 
 
-        document.addEventListener(
 
-            "click",
+update(){
 
-            ()=>{
 
 
-                document.body.requestPointerLock();
+// 移动速度
 
+let speed =
+this.speed;
 
 
-            }
 
-        );
+if(
+this.keys["ShiftLeft"]
+){
 
+speed =
+this.runSpeed;
 
+}
 
 
 
-        document.addEventListener(
 
-            "mousemove",
 
-            (event)=>{
+// 前后
 
+if(
+this.keys["KeyW"]
+){
 
+this.velocity.z =
+-speed;
 
-                if(
-                document.pointerLockElement
-                ){
 
+}
 
 
-                    this.rotation.y -=
+else if(
+this.keys["KeyS"]
+){
 
-                    event.movementX *
+this.velocity.z =
+speed;
 
-                    0.002;
 
+}
 
+else{
 
+this.velocity.z=0;
 
-                    this.rotation.x -=
+}
 
-                    event.movementY *
 
-                    0.002;
 
 
 
-                    this.rotation.x =
+// 左右
 
-                    Math.max(
+if(
+this.keys["KeyA"]
+){
 
-                        -1.5,
+this.velocity.x =
+-speed;
 
-                        Math.min(
 
-                            1.5,
+}
 
-                            this.rotation.x
 
-                        )
+else if(
+this.keys["KeyD"]
+){
 
-                    );
+this.velocity.x =
+speed;
 
 
+}
 
-                }
+else{
 
+this.velocity.x=0;
 
+}
 
-            }
 
-        );
 
 
 
-    }
 
 
+// 跳跃
 
+if(
 
+this.keys["Space"]
 
+&&
 
+this.ground
 
-    update(){
+){
 
 
+this.velocity.y =
+this.jumpPower;
 
-        this.updateCameraRotation();
 
+this.ground=false;
 
 
-        this.updateMovement();
+}
 
 
 
-        this.updateGravity();
 
 
 
-    }
+// 重力
 
+this.velocity.y +=
+this.gravity;
 
 
 
 
 
-    updateCameraRotation(){
+this.position.add(
+this.velocity
+);
 
 
 
-        this.camera.rotation.order =
-        "YXZ";
 
 
+// 地面
 
-        this.camera.rotation.y =
+if(
+this.position.y<=0
 
-        this.rotation.y;
+){
 
 
+this.position.y=0;
 
 
-        this.camera.rotation.x =
+this.velocity.y=0;
 
-        this.rotation.x;
 
+this.ground=true;
 
 
-    }
+}
 
 
 
 
 
 
+// 更新角色
 
+this.character.update(
 
-    updateMovement(){
+this.position
 
+);
 
 
-        const direction = new THREE.Vector3();
 
-        const forward = new THREE.Vector3();
 
 
+// 镜头跟随
 
-        this.camera.getWorldDirection(
+this.cameraFollow.update();
 
-            forward
 
-        );
 
 
+}
 
-        forward.y = 0;
-
-
-
-        forward.normalize();
-
-
-
-
-
-        if(
-        this.keys["KeyW"]
-        ){
-
-            direction.add(
-                forward
-            );
-
-        }
-
-
-
-        if(
-        this.keys["KeyS"]
-        ){
-
-            direction.sub(
-                forward
-            );
-
-        }
-
-
-
-        const right =
-        new THREE.Vector3();
-
-
-
-        right.crossVectors(
-
-            forward,
-
-            new THREE.Vector3(
-
-                0,
-
-                1,
-
-                0
-
-            )
-
-        );
-
-
-
-
-        if(
-        this.keys["KeyD"]
-        ){
-
-            direction.add(
-                right
-            );
-
-        }
-
-
-
-        if(
-        this.keys["KeyA"]
-        ){
-
-            direction.sub(
-                right
-            );
-
-        }
-
-
-
-        if(
-        direction.length()>0
-        ){
-
-
-
-            direction.normalize();
-
-
-
-            this.camera.position.x +=
-
-            direction.x *
-
-            this.speed;
-
-
-
-
-            this.camera.position.z +=
-
-            direction.z *
-
-            this.speed;
-
-
-
-        }
-
-
-
-
-
-
-        // 跳跃
-
-
-        if(
-
-        this.keys["Space"]
-
-        &&
-
-        this.onGround
-
-        ){
-
-
-            this.velocityY =
-            this.jumpPower;
-
-
-            this.onGround=false;
-
-
-        }
-
-
-
-    }
-
-
-
-
-
-
-
-    updateGravity(){
-
-
-
-        this.velocityY +=
-
-        this.gravity;
-
-
-
-        this.camera.position.y +=
-
-        this.velocityY;
-
-
-
-
-
-        if(
-
-        this.camera.position.y <=
-
-        this.groundHeight
-
-        ){
-
-
-
-            this.camera.position.y =
-
-            this.groundHeight;
-
-
-
-            this.velocityY = 0;
-
-
-
-            this.onGround=true;
-
-
-
-        }
-
-
-
-    }
 
 
 

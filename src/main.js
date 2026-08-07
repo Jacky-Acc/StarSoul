@@ -354,6 +354,7 @@ new Mission();
 
 const player =
 new PlayerController(
+scene,
 camera
 );
 
