@@ -1,14 +1,12 @@
-from
-"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
 export default class CameraFollow {
 
 
 constructor(camera,target){
 
 
-this.camera=camera;
+this.camera = camera;
 
-this.target=target;
+this.target = target;
 
 
 }
@@ -19,7 +17,7 @@ update(){
 
 
 
-const offset={
+const offset = {
 
 x:0,
 
@@ -33,20 +31,11 @@ z:8
 
 this.camera.position.set(
 
-this.target.position.x+
+this.target.x + offset.x,
 
-offset.x,
+this.target.y + offset.y,
 
-
-this.target.position.y+
-
-offset.y,
-
-
-this.target.position.z+
-
-offset.z
-
+this.target.z + offset.z
 
 );
 
@@ -54,7 +43,7 @@ offset.z
 
 this.camera.lookAt(
 
-this.target.position
+this.target
 
 );
 
