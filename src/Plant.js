@@ -5,118 +5,184 @@ import * as THREE from
 export default class Plant {
 
 
-    constructor(scene){
+constructor(scene){
 
 
-        this.scene = scene;
+this.scene=scene;
 
 
-        this.createPlants();
+this.plants=[];
 
 
-    }
+this.create();
 
 
-
-    createPlants(){
-
-
-        for(
-            let i=0;
-            i<60;
-            i++
-        ){
-
-
-            const group =
-            new THREE.Group();
+}
 
 
 
-            const stem =
-            new THREE.Mesh(
-
-                new THREE.CylinderGeometry(
-                    0.2,
-                    0.5,
-                    5,
-                    12
-                ),
-
-                new THREE.MeshStandardMaterial({
-
-                    color:0x3d8f4a
-
-                })
-
-            );
+create(){
 
 
-            group.add(stem);
+for(
+let i=0;
+i<80;
+i++
+){
 
 
 
-            const leaf =
-            new THREE.Mesh(
-
-                new THREE.SphereGeometry(
-                    1.5,
-                    16,
-                    16
-                ),
-
-                new THREE.MeshStandardMaterial({
-
-                    color:0x76d66b
-
-                })
-
-            );
-
-
-            leaf.position.y = 3;
-
-
-            group.add(leaf);
+const plant =
+new THREE.Group();
 
 
 
-            group.position.set(
+const stem =
+new THREE.Mesh(
 
-                (Math.random()-0.5)
-                *150,
+new THREE.CylinderGeometry(
 
+0.2,
 
-                2.5,
+0.6,
 
+6,
 
-                (Math.random()-0.5)
-                *150
+12
 
-            );
-
-
-            group.scale.set(
-
-                0.5+
-                Math.random(),
-
-                0.5+
-                Math.random(),
-
-                0.5+
-                Math.random()
-
-            );
+),
 
 
-            this.scene.add(group);
+new THREE.MeshStandardMaterial({
+
+color:0x3b8f50
+
+})
+
+);
 
 
-        }
+
+plant.add(stem);
 
 
-    }
+
+
+
+for(
+let j=0;
+j<5;
+j++
+){
+
+
+const leaf =
+new THREE.Mesh(
+
+new THREE.SphereGeometry(
+
+1.2,
+
+12,
+
+12
+
+),
+
+
+new THREE.MeshStandardMaterial({
+
+color:
+j%2?
+0x66ff99:
+0x44cc77
+
+})
+
+);
+
+
+
+leaf.position.set(
+
+Math.sin(j)*1.5,
+
+3+j*0.4,
+
+Math.cos(j)*1.5
+
+);
+
+
+
+plant.add(
+leaf
+);
+
+
+
+}
+
+
+
+plant.position.set(
+
+(Math.random()-0.5)*180,
+
+3,
+
+(Math.random()-0.5)*180
+
+);
+
+
+
+this.scene.add(
+plant
+);
+
+
+this.plants.push(
+plant
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+update(){
+
+
+this.plants.forEach(
+
+(p,i)=>{
+
+
+p.rotation.z =
+
+Math.sin(
+
+Date.now()*0.001+i
+
+)*0.05;
+
+
+
+}
+
+);
+
+
+
+}
+
 
 
 }

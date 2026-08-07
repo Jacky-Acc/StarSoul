@@ -23,7 +23,7 @@ import Creature from
 "./Creature.js";
 
 
-// 环境升级
+// 环境
 
 import Environment from
 "./Environment.js";
@@ -50,7 +50,7 @@ import Tower from
 "./Tower.js";
 
 
-// 游戏系统
+// 游戏
 
 import PlayerData from
 "./PlayerData.js";
@@ -83,11 +83,18 @@ import Mission from
 "./Mission.js";
 
 
+// 视觉升级
+
+import PostProcessing from
+"./PostProcessing.js";
 
 
-// ======================
-// 世界
-// ======================
+
+
+
+// =======================
+// 场景
+// =======================
 
 const scene =
 new THREE.Scene();
@@ -95,9 +102,10 @@ new THREE.Scene();
 
 
 
-// ======================
+
+// =======================
 // 摄像机
-// ======================
+// =======================
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -114,7 +122,6 @@ window.innerHeight,
 );
 
 
-
 camera.position.set(
 
 0,
@@ -129,10 +136,9 @@ camera.position.set(
 
 
 
-// ======================
-// 渲染
-// ======================
-
+// =======================
+// 渲染器
+// =======================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -149,9 +155,7 @@ antialias:true
 
 
 renderer.setPixelRatio(
-
 window.devicePixelRatio
-
 );
 
 
@@ -178,10 +182,29 @@ THREE.PCFSoftShadowMap;
 
 
 
+// =======================
+// 后处理
+// =======================
 
-// ======================
-// 大气系统
-// ======================
+const post =
+new PostProcessing(
+
+renderer,
+
+scene,
+
+camera
+
+);
+
+
+
+
+
+
+// =======================
+// 环境
+// =======================
 
 
 new Atmosphere(scene);
@@ -199,15 +222,19 @@ new Water(scene);
 
 
 
-// ======================
-// 异星环境
-// ======================
+
+// =======================
+// 星球
+// =======================
 
 
 new Terrain(scene);
 
 
+
+const plants =
 new Plant(scene);
+
 
 
 new Crystal(scene);
@@ -217,9 +244,10 @@ new Crystal(scene);
 
 
 
-// ======================
-// 人类文明
-// ======================
+
+// =======================
+// 文明
+// =======================
 
 
 new Base(scene);
@@ -235,9 +263,9 @@ new Tower(scene);
 
 
 
-// ======================
+// =======================
 // 生物
-// ======================
+// =======================
 
 
 const creatures =
@@ -248,9 +276,9 @@ new Creature(scene);
 
 
 
-// ======================
+// =======================
 // 游戏数据
-// ======================
+// =======================
 
 
 const playerData =
@@ -275,7 +303,6 @@ new Quest();
 
 
 
-const scanner =
 new Scanner(
 
 camera,
@@ -293,9 +320,10 @@ quest
 
 
 
-// ======================
+
+// =======================
 // 剧情
-// ======================
+// =======================
 
 
 new Intro();
@@ -311,7 +339,6 @@ new Story(ai);
 
 
 
-const mission =
 new Mission();
 
 
@@ -319,9 +346,10 @@ new Mission();
 
 
 
-// ======================
+
+// =======================
 // 玩家
-// ======================
+// =======================
 
 
 const player =
@@ -334,9 +362,11 @@ camera
 
 
 
-// ======================
-// 循环
-// ======================
+
+
+// =======================
+// 游戏循环
+// =======================
 
 
 function animate(){
@@ -356,17 +386,15 @@ creatures.update();
 
 
 
+plants.update();
+
+
+
 ui.update();
 
 
 
-renderer.render(
-
-scene,
-
-camera
-
-);
+post.render();
 
 
 
@@ -381,9 +409,11 @@ animate();
 
 
 
-// ======================
+
+
+// =======================
 // 自适应
-// ======================
+// =======================
 
 
 window.addEventListener(
