@@ -34,11 +34,15 @@ import Tower from
 "./Tower.js";
 
 
+import Creature from
+"./Creature.js";
 
 
-// =====================
-// 世界
-// =====================
+
+
+// =======================
+// 创建世界
+// =======================
 
 const scene =
 new THREE.Scene();
@@ -46,9 +50,9 @@ new THREE.Scene();
 
 
 
-// =====================
+// =======================
 // 摄像机
-// =====================
+// =======================
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -65,6 +69,7 @@ new THREE.PerspectiveCamera(
 );
 
 
+
 camera.position.set(
 
     0,
@@ -78,9 +83,10 @@ camera.position.set(
 
 
 
-// =====================
+
+// =======================
 // 渲染器
-// =====================
+// =======================
 
 const renderer =
 new THREE.WebGLRenderer({
@@ -118,85 +124,126 @@ renderer.shadowMap.enabled = true;
 
 
 
-// =====================
-// 环境
-// =====================
+// =======================
+// 世界环境
+// =======================
 
-new Environment(scene);
-
-
-
-
-// =====================
-// 自然生态
-// =====================
-
-new Terrain(scene);
-
-
-new Plant(scene);
-
-
-new Crystal(scene);
-
-
-
-
-// =====================
-// 人类文明
-// =====================
-
-new Base(scene);
-
-
-new Spaceship(scene);
-
-
-new Tower(scene);
-
-
-
-
-// =====================
-// 玩家
-// =====================
-
-const player =
-new PlayerController(
-camera
+new Environment(
+    scene
 );
 
 
 
 
-// =====================
-// 动画
-// =====================
+
+// =======================
+// 自然生态
+// =======================
+
+new Terrain(
+    scene
+);
+
+
+
+new Plant(
+    scene
+);
+
+
+
+new Crystal(
+    scene
+);
+
+
+
+
+
+// =======================
+// 科技文明
+// =======================
+
+new Base(
+    scene
+);
+
+
+
+new Spaceship(
+    scene
+);
+
+
+
+new Tower(
+    scene
+);
+
+
+
+
+
+// =======================
+// 异星生命
+// =======================
+
+const creatures =
+new Creature(
+    scene
+);
+
+
+
+
+
+// =======================
+// 玩家
+// =======================
+
+const player =
+new PlayerController(
+    camera
+);
+
+
+
+
+
+
+// =======================
+// 游戏循环
+// =======================
 
 function animate(){
 
 
-requestAnimationFrame(
-animate
-);
+    requestAnimationFrame(
+        animate
+    );
 
 
 
-player.update();
+    player.update();
 
 
 
-renderer.render(
+    creatures.update();
 
-scene,
 
-camera
 
-);
+    renderer.render(
+
+        scene,
+
+        camera
+
+    );
 
 
 
 }
+
 
 
 animate();
@@ -204,9 +251,12 @@ animate();
 
 
 
-// =====================
+
+
+
+// =======================
 // 自适应
-// =====================
+// =======================
 
 window.addEventListener(
 
