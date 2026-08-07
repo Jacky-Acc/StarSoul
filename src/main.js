@@ -2,102 +2,25 @@ import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
 
-// 玩家
 
-import PlayerController from
-"./PlayerController.js";
-
-
-// 世界
-
-import Terrain from
-"./Terrain.js";
-
-import Plant from
-"./Plant.js";
-
-import Crystal from
-"./Crystal.js";
-
-import Creature from
-"./Creature.js";
+const canvas =
+document.getElementById(
+"gameCanvas"
+);
 
 
-// 环境
-
-import Environment from
-"./Environment.js";
-
-import Atmosphere from
-"./Atmosphere.js";
-
-import Clouds from
-"./Clouds.js";
-
-import Water from
-"./Water.js";
-
-
-// 文明
-
-import Base from
-"./Base.js";
-
-import Spaceship from
-"./Spaceship.js";
-
-import Tower from
-"./Tower.js";
-
-
-// 游戏系统
-
-import PlayerData from
-"./PlayerData.js";
-
-import UI from
-"./UI.js";
-
-import Resource from
-"./Resource.js";
-
-import Quest from
-"./Quest.js";
-
-import Scanner from
-"./Scanner.js";
-
-
-// 剧情
-
-import Intro from
-"./Intro.js";
-
-import AI from
-"./AI.js";
-
-import Story from
-"./Story.js";
-
-import Mission from
-"./Mission.js";
-
-
-
-
-// ======================
-// 创建世界
-// ======================
 
 const scene =
 new THREE.Scene();
 
 
 
+scene.background =
+new THREE.Color(
+0x87ceeb
+);
 
-// ======================
-// 摄像机
-// ======================
+
 
 const camera =
 new THREE.PerspectiveCamera(
@@ -109,9 +32,10 @@ window.innerHeight,
 
 0.1,
 
-2000
+1000
 
 );
+
 
 
 camera.position.set(
@@ -120,33 +44,21 @@ camera.position.set(
 
 5,
 
-20
+10
 
 );
 
 
 
-
-// ======================
-// 渲染器
-// ======================
-
 const renderer =
 new THREE.WebGLRenderer({
 
-canvas:
-document.getElementById(
-"gameCanvas"
-),
+canvas:canvas,
 
 antialias:true
 
 });
 
-
-renderer.setPixelRatio(
-window.devicePixelRatio
-);
 
 
 renderer.setSize(
@@ -158,165 +70,117 @@ window.innerHeight
 );
 
 
-renderer.shadowMap.enabled = true;
-
-
-renderer.shadowMap.type =
-THREE.PCFSoftShadowMap;
 
 
 
+// 地面
+
+const ground =
+new THREE.Mesh(
+
+new THREE.PlaneGeometry(
+
+200,
+
+200
+
+),
 
 
-// ======================
-// 环境
-// ======================
+new THREE.MeshStandardMaterial({
 
-new Atmosphere(scene);
+color:0x55aa55
 
+})
 
-new Environment(scene);
-
-
-new Clouds(scene);
-
-
-new Water(scene);
-
-
-
-
-
-// ======================
-// 星球
-// ======================
-
-new Terrain(scene);
-
-
-const plants =
-new Plant(scene);
-
-
-new Crystal(scene);
+);
 
 
 
-
-
-// ======================
-// 文明
-// ======================
-
-new Base(scene);
-
-
-new Spaceship(scene);
-
-
-new Tower(scene);
+ground.rotation.x =
+-Math.PI/2;
 
 
 
-
-
-// ======================
-// 生物
-// ======================
-
-const creatures =
-new Creature(scene);
-
-
-
-
-
-// ======================
-// 玩家数据
-// ======================
-
-const playerData =
-new PlayerData();
-
-
-const ui =
-new UI(
-playerData
+scene.add(
+ground
 );
 
 
 
 
 
-// ======================
-// 资源任务
-// ======================
+// 光照
 
-const resource =
-new Resource(scene);
+const light =
+new THREE.DirectionalLight(
 
+0xffffff,
 
-const quest =
-new Quest();
-
-
-new Scanner(
-
-camera,
-
-resource,
-
-playerData,
-
-quest
+2
 
 );
 
 
 
+light.position.set(
+
+10,
+
+20,
+
+10
+
+);
 
 
-// ======================
-// 剧情
-// ======================
 
-new Intro();
-
-
-const ai =
-new AI();
-
-
-new Story(ai);
-
-
-new Mission();
-
+scene.add(
+light
+);
 
 
 
 
-// ======================
-// 玩家
-// ======================
 
 const player =
-new PlayerController(
+new THREE.Mesh(
 
-scene,
+new THREE.CapsuleGeometry(
 
-camera
+0.5,
 
+1,
+
+8,
+
+16
+
+),
+
+
+new THREE.MeshStandardMaterial({
+
+color:0xffffff
+
+})
+
+);
+
+
+
+player.position.y=1;
+
+
+
+scene.add(
+player
 );
 
 
 
 
 
-
-// ======================
-// 游戏循环
-// ======================
 
 function animate(){
 
@@ -324,26 +188,6 @@ function animate(){
 requestAnimationFrame(
 animate
 );
-
-
-
-player.update();
-
-
-creatures.update();
-
-
-if(
-plants.update
-){
-
-plants.update();
-
-}
-
-
-
-ui.update();
 
 
 
@@ -356,8 +200,8 @@ camera
 );
 
 
-
 }
+
 
 
 animate();
@@ -366,9 +210,6 @@ animate();
 
 
 
-// ======================
-// 自适应
-// ======================
 
 window.addEventListener(
 
@@ -396,7 +237,6 @@ window.innerWidth,
 window.innerHeight
 
 );
-
 
 
 });
