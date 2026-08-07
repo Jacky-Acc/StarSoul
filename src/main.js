@@ -6,11 +6,30 @@ import PlayerController from
 "./src/PlayerController.js";
 
 
+import AlienPlants from
+"./src/AlienPlants.js";
+
+
+import EnergyCrystal from
+"./src/EnergyCrystal.js";
+
+
+import AlienWater from
+"./src/AlienWater.js";
+
+
+import CrashShip from
+"./src/CrashShip.js";
+
+
+
+
 // ======================
 // 场景
 // ======================
 
-const scene = new THREE.Scene();
+const scene =
+new THREE.Scene();
 
 
 scene.background =
@@ -24,6 +43,7 @@ new THREE.FogExp2(
 0x9bdcff,
 0.002
 );
+
 
 
 
@@ -47,10 +67,15 @@ window.innerHeight,
 
 
 camera.position.set(
+
 0,
+
 5,
+
 10
+
 );
+
 
 
 
@@ -80,6 +105,13 @@ window.innerHeight
 );
 
 
+renderer.setPixelRatio(
+
+window.devicePixelRatio
+
+);
+
+
 renderer.shadowMap.enabled=true;
 
 
@@ -93,7 +125,6 @@ THREE.SRGBColorSpace;
 // ======================
 // 光照
 // ======================
-
 
 const sun =
 new THREE.DirectionalLight(
@@ -138,6 +169,7 @@ new THREE.HemisphereLight(
 )
 
 );
+
 
 
 
@@ -189,10 +221,11 @@ ground
 // 山体
 // ======================
 
+
 for(
 let i=0;
 
-i<20;
+i<25;
 
 i++
 
@@ -204,9 +237,9 @@ new THREE.Mesh(
 
 new THREE.ConeGeometry(
 
-10,
+10 + Math.random()*10,
 
-30,
+25 + Math.random()*30,
 
 8
 
@@ -215,7 +248,9 @@ new THREE.ConeGeometry(
 
 new THREE.MeshStandardMaterial({
 
-color:0x557755
+color:0x557755,
+
+roughness:1
 
 })
 
@@ -234,6 +269,7 @@ mountain.position.set(
 );
 
 
+
 mountain.castShadow=true;
 
 
@@ -242,7 +278,30 @@ mountain
 );
 
 
+
 }
+
+
+
+
+
+
+// ======================
+// 异星生态
+// ======================
+
+
+new AlienPlants(scene);
+
+
+new EnergyCrystal(scene);
+
+
+new AlienWater(scene);
+
+
+new CrashShip(scene);
+
 
 
 
@@ -251,7 +310,6 @@ mountain
 // ======================
 // 玩家
 // ======================
-
 
 const player =
 new PlayerController(
@@ -266,39 +324,30 @@ camera
 
 
 
+
+
 // ======================
-// 键盘移动
+// 鼠标控制
 // ======================
 
-const keys={};
-
+let mouseX=0;
 
 
 window.addEventListener(
 
-"keydown",
+"mousemove",
 
-e=>{
+(e)=>{
 
-keys[e.code]=true;
+
+mouseX -= e.movementX*0.002;
+
 
 }
 
 );
 
 
-
-window.addEventListener(
-
-"keyup",
-
-e=>{
-
-keys[e.code]=false;
-
-}
-
-);
 
 
 
@@ -319,7 +368,7 @@ animate
 
 if(player.update){
 
-player.update(keys);
+player.update();
 
 }
 
@@ -345,8 +394,10 @@ animate();
 
 
 
+
+
 // ======================
-// 窗口适配
+// 窗口调整
 // ======================
 
 window.addEventListener(
@@ -365,6 +416,7 @@ window.innerHeight;
 camera.updateProjectionMatrix();
 
 
+
 renderer.setSize(
 
 window.innerWidth,
@@ -372,6 +424,7 @@ window.innerWidth,
 window.innerHeight
 
 );
+
 
 
 });
