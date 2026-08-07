@@ -150,16 +150,17 @@ window.addEventListener(
 
 // 移动速度
 
-const speed = 0.15;
+const speed = 1;
 
 
 
 function playerMove(){
 
-
     if(keys["KeyW"]){
 
         camera.position.z -= speed;
+
+        console.log("W 前进", camera.position.z);
 
     }
 
@@ -168,12 +169,16 @@ function playerMove(){
 
         camera.position.z += speed;
 
+        console.log("S 后退", camera.position.z);
+
     }
 
 
     if(keys["KeyA"]){
 
         camera.position.x -= speed;
+
+        console.log("A 左移", camera.position.x);
 
     }
 
@@ -182,8 +187,9 @@ function playerMove(){
 
         camera.position.x += speed;
 
-    }
+        console.log("D 右移", camera.position.x);
 
+    }
 
 }
 
