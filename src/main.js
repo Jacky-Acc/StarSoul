@@ -6,21 +6,20 @@ import PlayerController from
 "./src/PlayerController.js";
 
 
-import AlienPlants from
-"./src/AlienPlants.js";
+import Plant from
+"./src/Plant.js";
 
 
-import EnergyCrystal from
-"./src/EnergyCrystal.js";
+import Crystal from
+"./src/Crystal.js";
 
 
-import AlienWater from
-"./src/AlienWater.js";
+import Water from
+"./src/Water.js";
 
 
-import CrashShip from
-"./src/CrashShip.js";
-
+import Spaceship from
+"./src/Spaceship.js";
 
 
 
@@ -43,7 +42,6 @@ new THREE.FogExp2(
 0x9bdcff,
 0.002
 );
-
 
 
 
@@ -75,7 +73,6 @@ camera.position.set(
 10
 
 );
-
 
 
 
@@ -112,7 +109,7 @@ window.devicePixelRatio
 );
 
 
-renderer.shadowMap.enabled=true;
+renderer.shadowMap.enabled = true;
 
 
 renderer.outputColorSpace =
@@ -147,7 +144,7 @@ sun.position.set(
 );
 
 
-sun.castShadow=true;
+sun.castShadow = true;
 
 
 scene.add(
@@ -156,8 +153,7 @@ sun
 
 
 
-scene.add(
-
+const ambient =
 new THREE.HemisphereLight(
 
 0xbfe8ff,
@@ -166,10 +162,12 @@ new THREE.HemisphereLight(
 
 1.5
 
-)
-
 );
 
+
+scene.add(
+ambient
+);
 
 
 
@@ -203,10 +201,10 @@ roughness:1
 
 
 ground.rotation.x =
--Math.PI/2;
+-Math.PI / 2;
 
 
-ground.receiveShadow=true;
+ground.receiveShadow = true;
 
 
 scene.add(
@@ -217,15 +215,15 @@ ground
 
 
 
-// ======================
-// 山体
-// ======================
 
+// ======================
+// 异星山体
+// ======================
 
 for(
-let i=0;
+let i = 0;
 
-i<25;
+i < 25;
 
 i++
 
@@ -270,13 +268,12 @@ mountain.position.set(
 
 
 
-mountain.castShadow=true;
+mountain.castShadow = true;
 
 
 scene.add(
 mountain
 );
-
 
 
 }
@@ -287,20 +284,20 @@ mountain
 
 
 // ======================
-// 异星生态
+// 异星环境
 // ======================
 
 
-new AlienPlants(scene);
+new Plant(scene);
 
 
-new EnergyCrystal(scene);
+new Crystal(scene);
 
 
-new AlienWater(scene);
+new Water(scene);
 
 
-new CrashShip(scene);
+new Spaceship(scene);
 
 
 
@@ -325,28 +322,39 @@ camera
 
 
 
-
 // ======================
-// 鼠标控制
+// 键盘
 // ======================
 
-let mouseX=0;
+const keys = {};
+
 
 
 window.addEventListener(
 
-"mousemove",
+"keydown",
 
 (e)=>{
 
-
-mouseX -= e.movementX*0.002;
-
+keys[e.code] = true;
 
 }
 
 );
 
+
+
+window.addEventListener(
+
+"keyup",
+
+(e)=>{
+
+keys[e.code] = false;
+
+}
+
+);
 
 
 
@@ -368,7 +376,7 @@ animate
 
 if(player.update){
 
-player.update();
+player.update(keys);
 
 }
 
@@ -387,9 +395,7 @@ camera
 }
 
 
-
 animate();
-
 
 
 
@@ -416,7 +422,6 @@ window.innerHeight;
 camera.updateProjectionMatrix();
 
 
-
 renderer.setSize(
 
 window.innerWidth,
@@ -424,7 +429,6 @@ window.innerWidth,
 window.innerHeight
 
 );
-
 
 
 });
